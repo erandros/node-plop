@@ -117,7 +117,13 @@ export default function (plop) {
 			// handle type
 			if (action.type === 'add') {
 				if (pathExists) {
-					throw failure('File already exists');
+					if (require('readline-sync').keyInYN('Overwrite ' + fileDestPath + '?')) {
+						yield fspp.makeDir(path.dirname(fileDestPath));
+						yield fspp.writeFile(fileDestPath, plop.renderString(template, data));
+					}
+					else {
+						throw failure('File already exists');
+					}
 				} else {
 					yield fspp.makeDir(path.dirname(fileDestPath));
 					yield fspp.writeFile(fileDestPath, plop.renderString(template, data));
